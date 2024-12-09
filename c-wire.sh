@@ -63,15 +63,40 @@ fi
 #Check if executable exist. TO CHANGE WHEN EXEC FILE NAME IS FIXED
 
 exec_exist=0
-files=`ls codeC`
+files_C=`ls codeC`
+file_counter=0 #Count .c file to verify later if there is the right number of .o file and if compilation worked
 
-for file in $files; do
+for file in $files_C; do
 	if [ $file == "exec" ]; then 
 		exec_exist=1
+	fi
+	
+	if [[ $file == *.c ]]; then 
+		file_counter=$(($file_counter + 1))
 	fi 
 done	
 
 
+#make
+
+#Update codeC directory to search the .o file and decrement the count to 0 if the compilation worked
+files_C_compiled=`ls codeC` 
+
+#ADD FILE O IF NEW FILE C ARE ADDED
+for file in $files_C_compiled; do 
+
+	if [ $file == "test.o" ] || [ $file == "test2.o" ]; then 
+		file_counter=$(($file_counter - 1))
+	fi 
+done
+
+echo "$file_counter"
+
+
+if [ $file_counter -ne 0 ]; then
+	echo "Compilation failed"
+	exit 2
+fi
 
 #Remove and create tmp and graphs directories
 
