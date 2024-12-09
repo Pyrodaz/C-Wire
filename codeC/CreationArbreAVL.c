@@ -176,27 +176,6 @@ Tree* createAVL(){
 	return pNew;
 }
 
-// TO DO
-
-Tree* insertBST(Tree* pTree, int v){
-	if(pTree == NULL){
-		//insert
-		pTree = createAVL(v);
-		if(pTree == NULL){
-			exit(15);
-		}
-	}
-	else if(v < pTree->value){
-		pTree->pLeft = insertBST(pTree->pLeft,v);
-	}
-	else if(v > pTree->value){
-		pTree->pRight = insertBST(pTree->pRight,v);
-	}
-	
-	return pTree;
-}
-
-
 Tree* insertAVL(Tree* pTree, int value, int* h){
 	
 	if(pTree == NULL){
@@ -227,13 +206,6 @@ Tree* insertAVL(Tree* pTree, int value, int* h){
 	}
 	return pTree;
 }
-
-
-/*Tree* insertion(Tree* pTree,int value){
-	pTree = insertBST(pTree, value);
-	pTree = insertAVL(pTree, value, 0);
-	return pTree;
-}*/
 
 
 Tree* suppMinAVL(Tree* pTree, int* h, int* pValue){
@@ -267,7 +239,7 @@ Tree* suppMinAVL(Tree* pTree, int* h, int* pValue){
 Tree* suppAVL(Tree* pTree, int value, int* h){
 	Tree* tmp;
 	if(pTree == NULL){
-		*h = 1;
+		*h = 0;
 		return pTree;
 	}
 	else if(value > pTree->value){
