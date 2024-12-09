@@ -1,31 +1,51 @@
 #!/bin/bash
 
+help=0
+
 #check first arg is a file
 if ! [ -f "$1" ]; then
 	echo "'$1' is not a file"
-	#display help -h
-	exit 1
+	help=1; #Display help menu
 fi
 
-#check if next args are valid
-if [ "$2" != "hvb" ] && [ "$2" != "hva" ] && [ "$2" != "lv" ]; then
-	echo "'$2' is not a valid argument"
-	#display help -h
-	exit 1
-fi
+#check if next args are valid ; if one condition is wrong display help menu and don't check other conditions
 
-if [ "$3" != "all" ] && [ "$3" != "indiv" ] && [ "$3" != "comp" ]; then
-	echo "'$3 is not a valid argument"
-	#display help -h
-	exit 1
-fi
-
-if [ "$2" == "hvb" ] || [ "$2" == "hva" ]; then
-	if [ "$3" == "indiv" ] || [ "$3" == "all" ]; then
-		echo "'$2 $3' is not a valid enter"
-		#display help -h
-		exit 1
+if [ $help -eq 0 ]; then
+	if [ "$2" != "hvb" ] && [ "$2" != "hva" ] && [ "$2" != "lv" ]; then
+		echo "'$2' is not a valid argument"
+		help=1;
 	fi
 fi
 
-if [ -d "tmp" ] 
+
+if [ $help -eq 0 ]; then 
+	if [ "$3" != "all" ] && [ "$3" != "indiv" ] && [ "$3" != "comp" ]; then
+		echo "'$3 is not a valid argument"
+		help=1;
+	fi
+fi
+
+if [ $help -eq 0 ]; then
+	if [ "$2" == "hvb" ] || [ "$2" == "hva" ]; then
+		if [ "$3" == "indiv" ] || [ "$3" == "all" ]; then
+			echo "'$2 $3' is not a valid enter"
+			help=1;
+		fi
+	fi
+fi
+
+files=ls
+tmp=0
+graphs=0
+for file in $files; do 
+	if [ -d "tmp" ]; then
+	 	tmp=1
+	fi
+	if [ -d "graphs" ]; then
+		graphs=1
+	fi
+done
+
+#if [ tmp -eq 1 ]; then
+
+
