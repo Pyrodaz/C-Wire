@@ -34,18 +34,11 @@ if [ $help -eq 0 ]; then
 	fi
 fi
 
-files=ls
-tmp=0
-graphs=0
-for file in $files; do 
-	if [ -d "tmp" ]; then
-	 	tmp=1
-	fi
-	if [ -d "graphs" ]; then
-		graphs=1
-	fi
-done
 
-#if [ tmp -eq 1 ]; then
+#Suppression et recréation des fichiers tmp et graphs
 
+rm -rf "tmp"
+rm -rf "graphs"
+mkdir "tmp"
+mkdir "graphs"
 
