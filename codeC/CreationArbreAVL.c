@@ -73,7 +73,7 @@ Tree* rotateLeft(Tree* pRoot){
 	if(pRoot == NULL || pRoot->pRight == NULL){
 		exit(200);
 	}
-	//update pointers 
+	//update pointers test
 	Tree* pPivot = pRoot->pRight;
 	pRoot->pRight = pPivot->pLeft;
 	pPivot->pLeft = pRoot;
