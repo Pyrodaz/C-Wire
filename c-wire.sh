@@ -11,12 +11,16 @@ for arg in $*; do
 	fi
 done
 
+
+#Check number of arguments 
+
 if [ $help -eq 0 ]; then
 	if [ "$#" -ne 3 ] && [ "$#" -ne 4 ]; then 
 		echo "bad number of arguments"
 		help=1
 	fi
 fi
+
 
 if [ $help -eq 0 ]; then
 	#check first arg is a file
@@ -52,10 +56,29 @@ if [ $help -eq 0 ]; then
 	fi
 fi
 
+echo "Number of arguments : $#"
+
+
+#If the number of central is specified, check if it is valid (so between 1 and 5 included)
+
+if [ $help -eq 0 ] && [ $# -eq 4 ]; then 
+	case $4 in
+		1);;
+		2);;
+		3);;
+		4);;
+		5);;
+		*) 	echo "$4 is an invalid number : it isn't between 1 and 5 included"
+			help=1 ;;
+	esac
+fi	
+
+
 #help menu and error menu if error in args
 if [ $help -eq 1 ]; then
 	echo "HELP"
 	#TO DO : write and put commands and explications to the help menu
+	echo "Program's execution time : 0.0 sec"
 	exit 1
 fi
 
@@ -76,10 +99,13 @@ for file in $files_C; do
 	fi 
 done	
 
+if [ $exec_exist -eq 0 ]; then
+	cd codeC/ #Go to codeC directory to compilate
+	make
+	cd .. #Return to root of program
+fi
 
-#make
-
-#Update codeC directory to search the .o file and decrement the count to 0 if the compilation worked
+#Update codeC directory to search the .o files and decrement the count until it reach 0 if the compilation worked. If the count is not equal 0, the compilation has failed so we exit the program
 files_C_compiled=`ls codeC` 
 
 #ADD FILE O IF NEW FILE C ARE ADDED
@@ -95,10 +121,11 @@ echo "$file_counter"
 
 if [ $file_counter -ne 0 ]; then
 	echo "Compilation failed"
+	echo "Program's execution time : 0.0 sec"
 	exit 2
 fi
 
-#Remove and create tmp and graphs directories
+#Remove and create new tmp and graphs directories. If they exist previously it clean them up.
 
 rm -rf "tmp"
 rm -rf "graphs"
