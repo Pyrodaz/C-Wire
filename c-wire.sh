@@ -138,17 +138,129 @@ SECONDS="0"
 
 #Create file to display the consommation of hva,hvb or lv station 
 
+
+
 case $# in 
-	3) touch "$2_$3.csv"
+	3)	touch "$2_$3.csv"
+		csv_result="$2_$3.csv"
 		echo "$2_$3.csv";;
-	4) touch "$2_$3_$4.csv"
+	4)	touch "$2_$3_$4.csv"
+		csv_result="$2_$3.csv"
 		echo "$2_$3_$4.csv";;  
-	*) ;;
+	*) 	;;
 esac 
 
 #RETIRE IN FINAL VERSION
 rm -f h*.csv
 rm -f lv*.csv
+
+$1 >> codeC/traitement.c
+
+
+case $2 in
+
+	hva)
+		echo `cat $1 | head -1 | cut -d ';' -f3,7`
+
+		for line in $list ; do
+			id_HVB=`echo "$line" | cut -d ';' -f2`
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ]; then
+			
+				echo "Id : $id_HVA | Capacity : $capacity"
+				
+			fi
+		done;;
+	hvb)
+		echo `cat $1 | head -1 | cut -d ';' -f1,7`
+
+		for line in $list ; do
+			id_HVB=`echo "$line" | cut -d ';' -f1`
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ] && [ $capacity != "-" ]; then
+			
+				echo "Id $id_HVB | Capacity : $capacity"
+				
+			fi
+		done;;
+	lv)
+		echo `cat $1 | head -1 | cut -d ';' -f4,7`
+
+		for line in $list ; do
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			id_LV=`echo "$line" | cut -d ';' -f4`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVA != "-" ] && [ $id_LV != "-" ]; then
+			
+				echo "Id $id_LV | Capacity : $capacity"
+				
+			fi
+		done;;
+	*);;
+
+esac  
+
+
+
+
+
+#Add the id and capacity of each HVA, HVB or LV into the result file. TO MOVE EVENTUALLY TO A TMP FILE !!
+
+
+list=`cat $1 | tail -n+2`
+
+case $2 in
+
+	hva)
+		echo `cat $1 | head -1 | cut -d ';' -f3,7`
+
+		for line in $list ; do
+			id_HVB=`echo "$line" | cut -d ';' -f2`
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ]; then
+			
+				echo "Id : $id_HVA | Capacity : $capacity"
+				
+			fi
+		done;;
+	hvb)
+		echo `cat $1 | head -1 | cut -d ';' -f1,7`
+
+		for line in $list ; do
+			id_HVB=`echo "$line" | cut -d ';' -f1`
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ] && [ $capacity != "-" ]; then
+			
+				echo "Id $id_HVB | Capacity : $capacity"
+				
+			fi
+		done;;
+	lv)
+		echo `cat $1 | head -1 | cut -d ';' -f4,7`
+
+		for line in $list ; do
+			id_HVA=`echo "$line" | cut -d ';' -f3`
+			id_LV=`echo "$line" | cut -d ';' -f4`
+			capacity=`echo "$line" | cut -d ';' -f7`
+			
+			if [ $id_HVA != "-" ] && [ $id_LV != "-" ]; then
+			
+				echo "Id $id_LV | Capacity : $capacity"
+				
+			fi
+		done;;
+	*);;
+
+esac 
 
 
 #print program's execution time
