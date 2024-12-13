@@ -78,7 +78,7 @@ fi
 if [ $help -eq 1 ]; then
 	echo "HELP"
 	#TO DO : write and put commands and explications to the help menu
-	echo "Program's execution time : 0.0 sec"
+	echo "Program's execution time : 0 sec"
 	exit 1
 fi
 
@@ -121,7 +121,7 @@ echo "$file_counter"
 
 if [ $file_counter -ne 0 ]; then
 	echo "Compilation failed"
-	echo "Program's execution time : 0.0 sec"
+	echo "Program's execution time : 0 sec"
 	exit 2
 fi
 
@@ -154,55 +154,91 @@ esac
 rm -f h*.csv
 rm -f lv*.csv
 
-$1 >> codeC/traitement.c
+touch tmp/data_to_process.csv
 
+list=`cat $1 | tail -n+2`
 
 case $2 in
-
+	#For hva and hvb there is only the comp case
 	hva)
-		echo `cat $1 | head -1 | cut -d ';' -f3,7`
-
+		echo `cat $1 | head -1 | cut -d ';' -f3,5,8` > tmp/data_to_process.csv #ERASE 5 
+ 
 		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f2`
 			id_HVA=`echo "$line" | cut -d ';' -f3`
-			capacity=`echo "$line" | cut -d ';' -f7`
+			id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
+			load=`echo "$line" | cut -d ';' -f8`
 			
-			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ]; then
+			if [ $id_HVA != "-" ] && [ $id_comp != "-" ]; then
 			
-				echo "Id : $id_HVA | Capacity : $capacity"
+				echo "$id_HVA;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
 				
 			fi
 		done;;
 	hvb)
-		echo `cat $1 | head -1 | cut -d ';' -f1,7`
+		echo `cat $1 | head -1 | cut -d ';' -f2,5,8` > tmp/data_to_process.csv #ERASE 5 
 
 		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f1`
-			id_HVA=`echo "$line" | cut -d ';' -f3`
-			capacity=`echo "$line" | cut -d ';' -f7`
+			id_HVB=`echo "$line" | cut -d ';' -f2`
+			id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
+			load=`echo "$line" | cut -d ';' -f8`
 			
-			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ] && [ $capacity != "-" ]; then
+			if [ $id_HVB != "-" ] && [ $id_comp != "-" ]; then
 			
-				echo "Id $id_HVB | Capacity : $capacity"
+				echo "$id_HVB;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
 				
 			fi
 		done;;
+		
+	#For there is comp,indiv and all cases so there is a second switch case for the third argument
 	lv)
-		echo `cat $1 | head -1 | cut -d ';' -f4,7`
+		case $3 in 
+			comp)
+				echo `cat $1 | head -1 | cut -d ';' -f4,5,8` > tmp/data_to_process.csv #ERASE 5 
 
-		for line in $list ; do
-			id_HVA=`echo "$line" | cut -d ';' -f3`
-			id_LV=`echo "$line" | cut -d ';' -f4`
-			capacity=`echo "$line" | cut -d ';' -f7`
+				for line in $list ; do
+					id_LV=`echo "$line" | cut -d ';' -f4`
+					id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
+					load=`echo "$line" | cut -d ';' -f8`
 			
-			if [ $id_HVA != "-" ] && [ $id_LV != "-" ]; then
+					if [ $id_LV != "-" ] && [ $id_comp != "-" ]; then
 			
-				echo "Id $id_LV | Capacity : $capacity"
+						echo "$id_LV;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
 				
-			fi
-		done;;
-	*);;
+					fi
+				done;;
+			indiv)
+				echo `cat $1 | head -1 | cut -d ';' -f4,6,8` > tmp/data_to_process.csv #ERASE 5 
 
+				for line in $list ; do
+					id_LV=`echo "$line" | cut -d ';' -f4`
+					id_indiv=`echo "$line" | cut -d ';' -f6` #TO ERASE
+					load=`echo "$line" | cut -d ';' -f8`
+			
+					if [ $id_LV != "-" ] && [ $id_indiv != "-" ]; then
+			
+						echo "$id_LV;$id_indiv;$load" >> tmp/data_to_process.csv #ERASE id_indiv
+				
+					fi
+				done;;
+			
+			all)
+				echo `cat $1 | head -1 | cut -d ';' -f4,5,6,8` > tmp/data_to_process.csv #ERASE 5 6
+
+				for line in $list ; do
+					id_LV=`echo "$line" | cut -d ';' -f4`
+					id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
+					id_indiv=`echo "$line" | cut -d ';' -f6` #TO ERASE
+					load=`echo "$line" | cut -d ';' -f8`
+			
+					if [ $id_LV != "-" ] && [ $load != "-" ]; then
+			
+						echo "$id_LV;$id_comp;$id_indiv;$load" >> tmp/data_to_process.csv  #ERASE id_comp id_indiv
+				
+					fi
+				done;; #End of all case
+			*);;
+		esac;; #End of lv case
+	*);;
 esac  
 
 
@@ -212,12 +248,12 @@ esac
 #Add the id and capacity of each HVA, HVB or LV into the result file. TO MOVE EVENTUALLY TO A TMP FILE !!
 
 
-list=`cat $1 | tail -n+2`
+
 
 case $2 in
 
 	hva)
-		echo `cat $1 | head -1 | cut -d ';' -f3,7`
+		echo `cat $1 | head -1 | cut -d ';' -f3,7` > tmp/result.csv
 
 		for line in $list ; do
 			id_HVB=`echo "$line" | cut -d ';' -f2`
@@ -226,35 +262,34 @@ case $2 in
 			
 			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ]; then
 			
-				echo "Id : $id_HVA | Capacity : $capacity"
+				echo "$id_HVA;$capacity" >> tmp/result.csv
 				
 			fi
 		done;;
 	hvb)
-		echo `cat $1 | head -1 | cut -d ';' -f1,7`
+		echo `cat $1 | head -1 | cut -d ';' -f2,7` > tmp/result.csv
 
 		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f1`
+			id_HVB=`echo "$line" | cut -d ';' -f2`
 			id_HVA=`echo "$line" | cut -d ';' -f3`
 			capacity=`echo "$line" | cut -d ';' -f7`
 			
-			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ] && [ $capacity != "-" ]; then
+			if [ $id_HVB != "-" ] && [ $id_HVA == "-" ] && [ $capacity != "-" ]; then
 			
-				echo "Id $id_HVB | Capacity : $capacity"
+				echo "$id_HVB;$capacity" >> tmp/result.csv
 				
 			fi
 		done;;
 	lv)
-		echo `cat $1 | head -1 | cut -d ';' -f4,7`
+		echo `cat $1 | head -1 | cut -d ';' -f4,7` > tmp/result.csv
 
 		for line in $list ; do
-			id_HVA=`echo "$line" | cut -d ';' -f3`
 			id_LV=`echo "$line" | cut -d ';' -f4`
 			capacity=`echo "$line" | cut -d ';' -f7`
 			
-			if [ $id_HVA != "-" ] && [ $id_LV != "-" ]; then
+			if [ $id_LV != "-" ] && [ $capacity != "-" ]; then
 			
-				echo "Id $id_LV | Capacity : $capacity"
+				echo "$id_LV;$capacity" >> tmp/result.csv
 				
 			fi
 		done;;
@@ -265,7 +300,7 @@ esac
 
 #print program's execution time
 
-echo $SECONDS
+echo "Program's execution time : $SECONDS sec"
 
 
 
