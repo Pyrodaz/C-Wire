@@ -131,6 +131,8 @@ rm -rf "tmp"
 rm -rf "graphs"
 mkdir "tmp"
 mkdir "graphs"
+rm -f hv*.csv
+rm -f lv*.csv
 
 #Set up the chronometer to mesure execution time of the program
 
@@ -145,103 +147,39 @@ case $# in
 		csv_result="$2_$3.csv"
 		echo "$2_$3.csv";;
 	4)	touch "$2_$3_$4.csv"
-		csv_result="$2_$3.csv"
+		csv_result="$2_$3_$4.csv"
 		echo "$2_$3_$4.csv";;  
 	*) 	;;
 esac 
 
-#RETIRE IN FINAL VERSION
-rm -f h*.csv
-rm -f lv*.csv
+
 
 touch tmp/data_to_process.csv
 
-list=`cat $1 | tail -n+2`
 
 case $2 in
 	#For hva and hvb there is only the comp case
 	hva)
-		echo `cat $1 | head -1 | cut -d ';' -f3,5,8` > tmp/data_to_process.csv #ERASE 5 
+		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
  
-		for line in $list ; do
-			id_HVA=`echo "$line" | cut -d ';' -f3`
-			id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
-			load=`echo "$line" | cut -d ';' -f8`
-			
-			if [ $id_HVA != "-" ] && [ $id_comp != "-" ]; then
-			
-				echo "$id_HVA;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
-				
-			fi
-		done;;
 	hvb)
-		echo `cat $1 | head -1 | cut -d ';' -f2,5,8` > tmp/data_to_process.csv #ERASE 5 
+		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
 
-		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f2`
-			id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
-			load=`echo "$line" | cut -d ';' -f8`
-			
-			if [ $id_HVB != "-" ] && [ $id_comp != "-" ]; then
-			
-				echo "$id_HVB;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
-				
-			fi
-		done;;
 		
 	#For there is comp,indiv and all cases so there is a second switch case for the third argument
 	lv)
 		case $3 in 
 			comp)
-				echo `cat $1 | head -1 | cut -d ';' -f4,5,8` > tmp/data_to_process.csv #ERASE 5 
-
-				for line in $list ; do
-					id_LV=`echo "$line" | cut -d ';' -f4`
-					id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
-					load=`echo "$line" | cut -d ';' -f8`
-			
-					if [ $id_LV != "-" ] && [ $id_comp != "-" ]; then
-			
-						echo "$id_LV;$id_comp;$load" >> tmp/data_to_process.csv #ERASE id_comp 
-				
-					fi
-				done;;
+				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
 			indiv)
-				echo `cat $1 | head -1 | cut -d ';' -f4,6,8` > tmp/data_to_process.csv #ERASE 5 
-
-				for line in $list ; do
-					id_LV=`echo "$line" | cut -d ';' -f4`
-					id_indiv=`echo "$line" | cut -d ';' -f6` #TO ERASE
-					load=`echo "$line" | cut -d ';' -f8`
-			
-					if [ $id_LV != "-" ] && [ $id_indiv != "-" ]; then
-			
-						echo "$id_LV;$id_indiv;$load" >> tmp/data_to_process.csv #ERASE id_indiv
-				
-					fi
-				done;;
-			
+				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
 			all)
-				echo `cat $1 | head -1 | cut -d ';' -f4,5,6,8` > tmp/data_to_process.csv #ERASE 5 6
-
-				for line in $list ; do
-					id_LV=`echo "$line" | cut -d ';' -f4`
-					id_comp=`echo "$line" | cut -d ';' -f5` #TO ERASE
-					id_indiv=`echo "$line" | cut -d ';' -f6` #TO ERASE
-					load=`echo "$line" | cut -d ';' -f8`
-			
-					if [ $id_LV != "-" ] && [ $load != "-" ]; then
-			
-						echo "$id_LV;$id_comp;$id_indiv;$load" >> tmp/data_to_process.csv  #ERASE id_comp id_indiv
-				
-					fi
-				done;; #End of all case
-			*);;
+				 cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;; 
 		esac;; #End of lv case
 	*);;
 esac  
 
-
+datapath="tmp/data_to_process.csv"
 
 
 
@@ -253,46 +191,15 @@ esac
 case $2 in
 
 	hva)
-		echo `cat $1 | head -1 | cut -d ';' -f3,7` > tmp/result.csv
-
-		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f2`
-			id_HVA=`echo "$line" | cut -d ';' -f3`
-			capacity=`echo "$line" | cut -d ';' -f7`
-			
-			if [ $id_HVB != "-" ] && [ $id_HVA != "-" ]; then
-			
-				echo "$id_HVA;$capacity" >> tmp/result.csv
-				
-			fi
-		done;;
+		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
+		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f3,7,8 | tr "-" "0" >> "$2_$3.csv";;
 	hvb)
-		echo `cat $1 | head -1 | cut -d ';' -f2,7` > tmp/result.csv
-
-		for line in $list ; do
-			id_HVB=`echo "$line" | cut -d ';' -f2`
-			id_HVA=`echo "$line" | cut -d ';' -f3`
-			capacity=`echo "$line" | cut -d ';' -f7`
-			
-			if [ $id_HVB != "-" ] && [ $id_HVA == "-" ] && [ $capacity != "-" ]; then
-			
-				echo "$id_HVB;$capacity" >> tmp/result.csv
-				
-			fi
-		done;;
+		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
+		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f2,7,8 | tr "-" "0" >> "$2_$3.csv";;
 	lv)
-		echo `cat $1 | head -1 | cut -d ';' -f4,7` > tmp/result.csv
-
-		for line in $list ; do
-			id_LV=`echo "$line" | cut -d ';' -f4`
-			capacity=`echo "$line" | cut -d ';' -f7`
-			
-			if [ $id_LV != "-" ] && [ $capacity != "-" ]; then
-			
-				echo "$id_LV;$capacity" >> tmp/result.csv
-				
-			fi
-		done;;
+		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
+		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f4,7,8 | tr "-" "0" >> "$2_$3.csv";;
+		
 	*);;
 
 esac 
