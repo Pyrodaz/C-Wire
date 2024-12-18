@@ -8,8 +8,11 @@ LV stations provide electricity to individuals and small companies.
 The arguments after "bash c-wire.sh" can only be 3 (or 4 if there is to analyse the stations of a specific power plant).
 
 The arguments should be in this format :
+
 bash c-wire.sh file.csv type_of_station_to_analyse consommation_of_composants_to_analyse (number_of_power_plant)
+
 Examples :
+
 bash c-wire.sh c-wire_v25.dat hvb comp 1
 bash c-wire.sh c-wire_v00.csv lv all
 
