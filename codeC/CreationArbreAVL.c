@@ -196,26 +196,27 @@ void freeAVL(Tree* pTree){
 
 void infix_write(Tree* pTree, FILE * file){
 	if (pTree !=NULL ){
-		infix_write(pTree->pLeft);
-        fprintf(file, "%ld:%ld:%ld" ,pTree->station.id, pTree->station.capacity, pTree->station.load);
-		infix_write(pTree->pRight);
+		infix_write(pTree->pLeft, file);
+        fprintf(file, "%ld:%ld:%ld\n" ,pTree->station.id, pTree->station.capacity, pTree->station.load);
+		infix_write(pTree->pRight, file);
 	}
 }
 
 int main(int argc, char** argv){ 
     // ./exe nomFichier.csv nomFichierRetour.csv
     
+
     if (argc != 3 || argv == NULL || argv[1] == NULL || argv[2] == NULL)
     {
         exit(100);
     }
     
     FILE * file = fopen(argv[1],"r");
-    
+
     if (file==NULL){
         exit(110);
     }
-
+ 
     Tree* tree = NULL;
     Station station;
     
@@ -223,10 +224,12 @@ int main(int argc, char** argv){
     long int id, load, capacity;
     char string[MAX];
 
+ 
+
     while (fgets(string, MAX, file))
     {
-        ret_var = sscanf(string, "%ld;%ld;%ld", id,capacity,load);
-
+        ret_var = sscanf(string, "%ld;%ld;%ld", &id,&capacity,&load);
+    
         if (ret_var != 3)
         {
             exit(120);
@@ -243,12 +246,10 @@ int main(int argc, char** argv){
     
     FILE * file2 = fopen(argv[2],"w");
     infix_write(tree, file2);
-
+    
     freeAVL(tree);
 
     return 0;
 } 
 
-// à mettre dans le commit -> supprimer première ligne data to process + ajouter capacité et utiliser awk a la place des for (trop long sinon) 
-// + transformer les "-" en 0 + verifier nom fichier retour etc + mettre en tete fichier sorti dans le Shell apres l'appel du C 
     
