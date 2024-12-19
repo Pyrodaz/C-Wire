@@ -113,7 +113,9 @@ esac
 
 
 
-touch tmp/data_to_process.csv
+touch tmp/data_processed.csv
+chmod 777 tmp/data_processed.csv
+
 
 
 case $2 in
@@ -158,11 +160,11 @@ case $2 in
 				fi ;;
 			all)
 				if [ $# -eq 4 ]; then
-					cat $1 | tail -n+2 | grep -E "^$4;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3  | tr "-" "0" >> tmp/data_to_process.csv
+					cat $1 | tail -n+2 | grep -E "^$4;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3  | tr "-" "0" | ./main 
 			
 				else
 				
-					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" | ./main
 					
 				fi;;
 		esac;; #End of lv case
@@ -170,17 +172,6 @@ case $2 in
 esac  
 
 
-touch tmp/data_processed.csv
-
-
-if [ $# -eq 4 ]; then 
-	cat tmp/data_to_process.csv >> ./main "tmp/data_processed.csv"
-	
-else
-	cat tmp/data_to_process.csv >> ./main "tmp/data_processed.csv"
-fi
-
-chmod 777 tmp/data_processed.csv
 
 
 
