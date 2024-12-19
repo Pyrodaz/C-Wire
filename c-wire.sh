@@ -119,31 +119,111 @@ touch tmp/data_to_process.csv
 case $2 in
 	#For hva and hvb there is only the comp case
 	hva)
-		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+		if [ $# -eq 4 ]; then
+			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		else
+			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		fi;;
  
 	hvb)
-		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
-
+		if [ $# -eq 4 ]; then
+			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		else
+			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		fi;;
 		
 	#For there is comp,indiv and all cases so there is a second switch case for the third argument
 	lv)
 		case $3 in 
 			comp)
-				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					
+				fi;;
+				
 			indiv)
-				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+				
+				fi ;;
 			all)
-				 cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k2 | tr "-" "0" >> tmp/data_to_process.csv;; 
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3  | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+				
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					
+				fi;;
 		esac;; #End of lv case
 	*);;
 esac  
 
-datapath="tmp/data_to_process.csv"
+
+chmod 777 tmp/data_to_process.csv
 
 
 
-#Add the id and capacity of each HVA, HVB or LV into the result file. TO MOVE EVENTUALLY TO A TMP FILE !!
+#Create the final file
 
+
+
+
+case $2 in
+
+	hva)
+		if [ $# -eq 4 ]; then
+		
+		echo "HV-A;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+		
+		echo "HV-A;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
+	
+		
+	hvb)
+	
+		if [ $# -eq 4 ]; then
+		
+		echo "HV-B;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+	
+		echo "HV-B;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
+		
+	lv) #SUPPLEMENTARY STEPS TO DO LATER WHEN C PROGRAM IS FINISHED
+		if [ $# -eq 4 ]; then
+		
+		echo "LV;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+	
+		echo "LV;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
+	*);;
+
+esac 
 
 
 
