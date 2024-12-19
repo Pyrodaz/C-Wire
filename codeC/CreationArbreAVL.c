@@ -152,7 +152,8 @@ Tree* insertAVL(Tree* pTree, Station station, int* h){
     }
     else{
         *h = 0;
-        pTree->station.load += station.load; // calcul noeud existe 
+        pTree->station.load += station.load;
+        pTree->station.capacity += station.capacity; // calcul noeud existe 
         return pTree;
     }
     if(*h != 0){
@@ -197,7 +198,7 @@ void freeAVL(Tree* pTree){
 void infix_write(Tree* pTree, FILE * file){
 	if (pTree !=NULL ){
 		infix_write(pTree->pLeft, file);
-        fprintf(file, "%ld:%ld:%ld\n" ,pTree->station.id, pTree->station.capacity, pTree->station.load);
+        fprintf(file, "%ld:%ld:%ld:%ld\n" ,pTree->station.id, pTree->station.capacity, pTree->station.load,station.capacity-station.load);
 		infix_write(pTree->pRight, file);
 	}
 }
@@ -211,7 +212,7 @@ int main(int argc, char** argv){
         exit(100);
     }
     
-    FILE * file = fopen(argv[1],"r");
+    FILE * file = stdin;//fopen(argv[1],"r"); 
 
     if (file==NULL){
         exit(110);
@@ -228,7 +229,7 @@ int main(int argc, char** argv){
 
     while (fgets(string, MAX, file))
     {
-        ret_var = sscanf(string, "%ld;%ld;%ld", &id,&capacity,&load);
+        ret_var = sscanf(file, "%ld;%ld;%ld", &id,&capacity,&load);
     
         if (ret_var != 3)
         {
