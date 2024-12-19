@@ -245,7 +245,7 @@ int main(int argc, char** argv){
      
     fclose(file);
     
-    FILE * file2 = fopen(argv[2],"w");
+    FILE * file2 = fopen(argv[1],"w");
     infix_write(tree, file2);
     
     freeAVL(tree);
