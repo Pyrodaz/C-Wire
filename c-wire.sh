@@ -77,7 +77,7 @@ fi
 #help menu and error menu if error in args
 if [ $help -eq 1 ]; then
 	echo "HELP"
-	#TO DO : write and put commands and explications to the help menu
+	cat README.md
 	echo "Program's execution time : 0 sec"
 	exit 1
 fi
@@ -170,7 +170,17 @@ case $2 in
 esac  
 
 
-chmod 777 tmp/data_to_process.csv
+touch tmp/data_processed.csv
+
+
+if [ $# -eq 4 ]; then 
+	cat tmp/data_to_process.csv >> ./main "tmp/data_processed.csv"
+	
+else
+	cat tmp/data_to_process.csv >> ./main "tmp/data_processed.csv"
+fi
+
+chmod 777 tmp/data_processed.csv
 
 
 
@@ -185,12 +195,12 @@ case $2 in
 		if [ $# -eq 4 ]; then
 		
 		echo "HV-A;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 >> $2_$3_$4.csv
 		
 		else 
 		
 		echo "HV-A;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 >> $2_$3.csv
 		
 		fi;;
 	
@@ -200,12 +210,12 @@ case $2 in
 		if [ $# -eq 4 ]; then
 		
 		echo "HV-B;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3_$4.csv
 		
 		else 
 	
 		echo "HV-B;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3.csv
 		
 		fi;;
 		
@@ -213,12 +223,12 @@ case $2 in
 		if [ $# -eq 4 ]; then
 		
 		echo "LV;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3_$4.csv
 		
 		else 
 	
 		echo "LV;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3.csv
 		
 		fi;;
 	*);;
@@ -239,7 +249,6 @@ gcc -o main CreationArbreAVL.c
 #print program's execution time
 
 echo "Program's execution time : $SECONDS sec"
-
 
 
 
