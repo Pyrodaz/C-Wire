@@ -174,16 +174,16 @@ case $2 in
 			indiv)
 				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
 			all)
-				 cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;; 
+				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;; 
 		esac;; #End of lv case
 	*);;
 esac  
 
-datapath="tmp/data_to_process.csv"
+chmod 777 tmp/data_to_process.csv
 
 
 
-#Add the id and capacity of each HVA, HVB or LV into the result file. TO MOVE EVENTUALLY TO A TMP FILE !!
+#Create the final file
 
 
 
@@ -191,14 +191,14 @@ datapath="tmp/data_to_process.csv"
 case $2 in
 
 	hva)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f3,7,8 | tr "-" "0" >> "$2_$3.csv";;
+		echo "HV-A;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" |  tr "-" "0" >> $2_$3.csv;;
 	hvb)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f2,7,8 | tr "-" "0" >> "$2_$3.csv";;
+		echo "HV-A;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" |  tr "-" "0" >> $2_$3.csv;;
 	lv)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f4,7,8 | tr "-" "0" >> "$2_$3.csv";;
+		echo "HV-A;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" |  tr "-" "0" >> $2_$3.csv;;
 		
 	*);;
 
