@@ -1,5 +1,5 @@
 #!/bin/bash
-
+SECONDS="0"
 help=0
 
 #check if there is -h arg in args to display help menu. Other option are invalidate 
@@ -83,47 +83,6 @@ if [ $help -eq 1 ]; then
 fi
 
 
-#Check if executable exist. TO CHANGE WHEN EXEC FILE NAME IS FIXED
-
-exec_exist=0
-files_C=`ls codeC`
-file_counter=0 #Count .c file to verify later if there is the right number of .o file and if compilation worked
-
-for file in $files_C; do
-	if [ $file == "exec" ]; then 
-		exec_exist=1
-	fi
-	
-	if [[ $file == *.c ]]; then 
-		file_counter=$(($file_counter + 1))
-	fi 
-done	
-
-if [ $exec_exist -eq 0 ]; then
-	cd codeC/ #Go to codeC directory to compilate
-	make
-	cd .. #Return to root of program
-fi
-
-#Update codeC directory to search the .o files and decrement the count until it reach 0 if the compilation worked. If the count is not equal 0, the compilation has failed so we exit the program
-files_C_compiled=`ls codeC` 
-
-#ADD FILE O IF NEW FILE C ARE ADDED
-for file in $files_C_compiled; do 
-
-	if [ $file == "test.o" ] || [ $file == "test2.o" ]; then 
-		file_counter=$(($file_counter - 1))
-	fi 
-done
-
-echo "$file_counter"
-
-
-if [ $file_counter -ne 0 ]; then
-	echo "Compilation failed"
-	echo "Program's execution time : 0 sec"
-	exit 2
-fi
 
 #Remove and create new tmp and graphs directories. If they exist previously it clean them up.
 
@@ -136,7 +95,7 @@ rm -f lv*.csv
 
 #Set up the chronometer to mesure execution time of the program
 
-SECONDS="0"
+
 
 #Create file to display the consommation of hva,hvb or lv station 
 
@@ -160,30 +119,62 @@ touch tmp/data_to_process.csv
 case $2 in
 	#For hva and hvb there is only the comp case
 	hva)
-		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+		if [ $# -eq 4 ]; then
+			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		else
+			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		fi;;
  
 	hvb)
-		cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
-
+		if [ $# -eq 4 ]; then
+			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		else
+			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+		fi;;
 		
 	#For there is comp,indiv and all cases so there is a second switch case for the third argument
 	lv)
 		case $3 in 
 			comp)
-				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					
+				fi;;
+				
 			indiv)
-				cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;;
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+				
+				fi ;;
 			all)
-				 cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;" | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv;; 
+				if [ $# -eq 4 ]; then
+					cat $1 | tail -n+2 | grep -E "^$4;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3  | tr "-" "0" >> tmp/data_to_process.csv
+			
+				else
+				
+					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					
+				fi;;
 		esac;; #End of lv case
 	*);;
 esac  
 
-datapath="tmp/data_to_process.csv"
+
+chmod 777 tmp/data_to_process.csv
 
 
 
-#Add the id and capacity of each HVA, HVB or LV into the result file. TO MOVE EVENTUALLY TO A TMP FILE !!
+#Create the final file
 
 
 
@@ -191,18 +182,58 @@ datapath="tmp/data_to_process.csv"
 case $2 in
 
 	hva)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f3,7,8 | tr "-" "0" >> "$2_$3.csv";;
-	hvb)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f2,7,8 | tr "-" "0" >> "$2_$3.csv";;
-	lv)
-		echo "HV-A;Capacity;Load" >> "$2_$3.csv"
-		cat "tmp/data_to_process.csv" | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;-;-;[0-9]+" | cut -d ";" -f4,7,8 | tr "-" "0" >> "$2_$3.csv";;
+		if [ $# -eq 4 ]; then
 		
+		echo "HV-A;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+		
+		echo "HV-A;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
+	
+		
+	hvb)
+	
+		if [ $# -eq 4 ]; then
+		
+		echo "HV-B;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+	
+		echo "HV-B;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
+		
+	lv) #SUPPLEMENTARY STEPS TO DO LATER WHEN C PROGRAM IS FINISHED
+		if [ $# -eq 4 ]; then
+		
+		echo "LV;Capacity;Load" >> $2_$3_$4.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3_$4.csv
+		
+		else 
+	
+		echo "LV;Capacity;Load" >> $2_$3.csv
+		cat tmp/data_to_process.csv | tail -n+2 | grep -E "^[0-9]+;[0-9]+;0" | sort -t';' -n -k1 >> $2_$3.csv
+		
+		fi;;
 	*);;
 
 esac 
+
+
+
+
+cd codeC
+gcc -o main CreationArbreAVL.c 
+./main "../$datapath" "$2_$3.csv"
+
+
+
 
 
 #print program's execution time
