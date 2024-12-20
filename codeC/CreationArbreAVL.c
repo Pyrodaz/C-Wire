@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX 300 
-
-typedef struct {
-    long int id;
-    long int capacity;
-    long int load;
-} Station;
-
-typedef struct _tree{
-    Station station;
-    struct _tree* pLeft;
-    struct _tree* pRight;
-    int balance;
-} Tree;
+#include "CreationArbreAVL.h"
 
 
 
@@ -34,6 +17,7 @@ int max3(int a, int b, int c){
 }
 
 
+
 Tree* createAVL(Station station){
     Tree* pNew = malloc(sizeof(Tree));
     if(pNew == NULL){
@@ -46,7 +30,6 @@ Tree* createAVL(Station station){
 
     return pNew;
 }
-
 
 Tree* rotateLeft(Tree* pRoot){
     if(pRoot == NULL || pRoot->pRight == NULL){
@@ -64,7 +47,6 @@ Tree* rotateLeft(Tree* pRoot){
     
     return pPivot;
 }
-
 
 Tree* rotateRight(Tree* pRoot){
     if(pRoot == NULL || pRoot->pLeft == NULL){
@@ -84,7 +66,6 @@ Tree* rotateRight(Tree* pRoot){
     
 }
 
-
 Tree* doubleRotateLeft(Tree* pRoot){
     if(pRoot==NULL || pRoot->pRight == NULL){
         exit(40);
@@ -93,7 +74,6 @@ Tree* doubleRotateLeft(Tree* pRoot){
     return rotateLeft(pRoot);
 } 
 
-
 Tree* doubleRotateRight(Tree* pRoot){
     if(pRoot==NULL || pRoot->pLeft == NULL){
         exit(50);
@@ -101,7 +81,6 @@ Tree* doubleRotateRight(Tree* pRoot){
     pRoot->pLeft = rotateLeft(pRoot->pLeft);
     return rotateRight(pRoot);
 }
-
 
 Tree* balanceAVL(Tree* pRoot){
     if(pRoot == NULL){
@@ -136,7 +115,6 @@ Tree* balanceAVL(Tree* pRoot){
     return pRoot;
 }
 
-
 Tree* insertAVL(Tree* pTree, Station station, int* h){
     
     if(pTree == NULL){
@@ -152,8 +130,8 @@ Tree* insertAVL(Tree* pTree, Station station, int* h){
     }
     else{
         *h = 0;
-        pTree->station.load += station.load;
-        pTree->station.capacity += station.capacity; // calcul noeud existe 
+        pTree->station.load += station.load; // calcul noeud existe 
+        pTree->station.capacity += station.capacity;
         return pTree;
     }
     if(*h != 0){
@@ -170,54 +148,43 @@ Tree* insertAVL(Tree* pTree, Station station, int* h){
     return pTree;
 }
 
-/*void add_conso(Tree* pTree, Station station){
-
-    if(pTree != NULL){
-        
-        if(pTree->station.id == station.id){
-            pTree->station.load += station.load;
-        }
-        else if(pTree->station.id > station.id){
-            add_conso(pTree->pLeft, station);
-        }
-        else{
-            add_conso(pTree->pRight, station);
-        }
-    }
-}*/
-
-void freeAVL(Tree* pTree){
+Tree* freeAVL(Tree* pTree){
     if (pTree != NULL)
     {
-        freeAVL(pTree->pLeft);
-        freeAVL(pTree->pRight);
+        pTree->pLeft = freeAVL(pTree->pLeft);
+        pTree->pRight = freeAVL(pTree->pRight);
         free(pTree);
+        pTree = NULL;
     }
+    return pTree;
+
 }
 
-void infix_write(Tree* pTree, FILE * file){
+void infix_write(Tree* pTree, FILE* file){
 	if (pTree !=NULL ){
 		infix_write(pTree->pLeft, file);
-        fprintf(file, "%ld:%ld:%ld:%ld\n" ,pTree->station.id, pTree->station.capacity, pTree->station.load,station.capacity-station.load);
+        fprintf(file, "%ld:%ld:%ld\n" ,pTree->station.id, pTree->station.capacity, pTree->station.load);
 		infix_write(pTree->pRight, file);
 	}
 }
 
+
+
 int main(int argc, char** argv){ 
     // ./exe nomFichier.csv nomFichierRetour.csv
     
-
     if (argc != 3 || argv == NULL || argv[1] == NULL || argv[2] == NULL)
     {
         exit(100);
     }
     
-    FILE * file = stdin;//fopen(argv[1],"r"); 
+    FILE* file = fopen(argv[1],"r");
 
     if (file==NULL){
         exit(110);
     }
  
+
     Tree* tree = NULL;
     Station station;
     
@@ -225,12 +192,11 @@ int main(int argc, char** argv){
     long int id, load, capacity;
     char string[MAX];
 
- 
 
     while (fgets(string, MAX, file))
     {
-        ret_var = sscanf(file, "%ld;%ld;%ld", &id,&capacity,&load);
-    
+        ret_var = sscanf(string, "%ld;%ld;%ld", &id,&capacity,&load);
+
         if (ret_var != 3)
         {
             exit(120);
@@ -242,13 +208,18 @@ int main(int argc, char** argv){
 
         tree = insertAVL(tree, station, &h);
     }
-     
+
     fclose(file);
-    
-    FILE * file2 = fopen(argv[1],"w");
+
+    FILE* file2 = fopen(argv[2],"w");
+    if (file2==NULL){
+        exit(130);
+    }
+
     infix_write(tree, file2);
     
-    freeAVL(tree);
+    fclose(file2);
+    tree = freeAVL(tree);
 
     return 0;
 } 
