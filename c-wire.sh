@@ -115,24 +115,25 @@ esac
 
 touch tmp/data_to_process.csv
 
+SECONDS="0"
 
 case $2 in
 	#For hva and hvb there is only the comp case
 	hva)
 		if [ $# -eq 4 ]; then
-			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			grep -E "^$4;[0-9]+;[0-9]+;-;" $1 | cut -d ";" -f3,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 			
 		else
-			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" | cut -d ";" -f3,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			grep -E "^[0-9]+;[0-9]+;[0-9]+;-;" $1 | cut -d ";" -f3,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 			
 		fi;;
  
 	hvb)
 		if [ $# -eq 4 ]; then
-			cat $1 | tail -n+2 | grep -E "^$4;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			grep -E "^$4;[0-9]+;-;-;" $1 | cut -d ";" -f2,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 			
 		else
-			cat $1 | tail -n+2 | grep -E "^[0-9]+;[0-9]+;-;-;" | cut -d ";" -f2,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+			grep -E "^[0-9]+;[0-9]+;-;-;" $1 | cut -d ";" -f2,7,8 |  tr "-" "0" >> tmp/data_to_process.csv
 			
 		fi;;
 		
@@ -141,34 +142,35 @@ case $2 in
 		case $3 in 
 			comp)
 				if [ $# -eq 4 ]; then
-					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^$4;-;-;[0-9]+;[0-9]+;-;" $1 | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 			
 				else
-					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^[0-9]+;-;-;[0-9]+;[0-9]+;-;" $1 | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 					
 				fi;;
 				
 			indiv)
 				if [ $# -eq 4 ]; then
-					cat $1 | tail -n+2 | grep -E "^$4;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^$4;-;-;[0-9]+;-;[0-9]+;" $1 | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 			
 				else
-					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^[0-9]+;-;-;[0-9]+;-;[0-9]+;" $1 | cut -d ";" -f4,7,8 |  tr "-" "0" >> tmp/data_to_process.csv
 				
 				fi ;;
 			all)
 				if [ $# -eq 4 ]; then
-					cat $1 | tail -n+2 | grep -E "^$4;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3  | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^$4;-;[^;]*;[0-9]+;" $1 | cut -d ";" -f4,7,8 |  tr "-" "0" >> tmp/data_to_process.csv
 			
 				else
 				
-					cat $1 | tail -n+2 | grep -E "^[0-9]+;-;[^;]*;[0-9]+;" | cut -d ";" -f4,7,8 | sort -t';' -n -k3 | tr "-" "0" >> tmp/data_to_process.csv
+					grep -E "^[0-9]+;-;[^;]*;[0-9]+;" $1 | cut -d ";" -f4,7,8 | tr "-" "0" >> tmp/data_to_process.csv
 					
 				fi;;
 		esac;; #End of lv case
 	*);;
 esac  
 
+echo "Program's execution time : $SECONDS sec"
 
 touch tmp/data_processed.csv
 
@@ -195,12 +197,12 @@ case $2 in
 		if [ $# -eq 4 ]; then
 		
 		echo "HV-A;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 >> $2_$3_$4.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 >> $2_$3_$4.csv
 		
 		else 
 		
 		echo "HV-A;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 >> $2_$3.csv
+		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 >> $2_$3.csv
 		
 		fi;;
 	
@@ -209,26 +211,40 @@ case $2 in
 	
 		if [ $# -eq 4 ]; then
 		
-		echo "HV-B;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3_$4.csv
+			echo "HV-B;Capacity;Load" >> $2_$3_$4.csv
+			cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 > $2_$3_$4.csv
 		
 		else 
 	
-		echo "HV-B;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3.csv
+			echo "HV-B;Capacity;Load" >> $2_$3.csv
+			cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 > $2_$3.csv
 		
 		fi;;
 		
 	lv) #SUPPLEMENTARY STEPS TO DO LATER WHEN C PROGRAM IS FINISHED
 		if [ $# -eq 4 ]; then
 		
-		echo "LV;Capacity;Load" >> $2_$3_$4.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3_$4.csv
+			echo "LV;Capacity;Load" >> $2_$3_$4.csv
+			cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 > $2_$3_$4.csv
+		
+			if  [ $3 == "all" ]; then 
+				
+				cat $2_$3_$4.csv | head -11 > $2_$3_$4_minmax.csv 
+				cat $2_$3_$4.csv | tail -10 >> $2_$3_$4_minmax.csv 
+			fi
 		
 		else 
 	
-		echo "LV;Capacity;Load" >> $2_$3.csv
-		cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k1 > $2_$3.csv
+			echo "LV;Capacity;Load" >> $2_$3.csv
+			cat tmp/data_processed.csv | grep -E "^[0-9]+;[0-9]+;0" | cut -d ";" -f1,2,4 | sort -t';' -n -k3 >> $2_$3.csv
+		
+			if  [ $3 == "all" ]; then 
+				
+				cat $2_$3.csv | head -11 > $2_$3_minmax.csv 
+				cat $2_$3.csv | tail -10 >> $2_$3_minmax.csv 
+			
+				sort -t ';' -n -k3 $2_$3_minmax.csv 
+			fi
 		
 		fi;;
 	*);;
