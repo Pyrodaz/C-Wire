@@ -231,6 +231,20 @@ case $2 in
 				
 				cat $2_$3_$4.csv | head -11 > $2_$3_$4_minmax.csv 
 				cat $2_$3_$4.csv | tail -10 >> $2_$3_$4_minmax.csv 
+				
+				gnuplot -persist <<-EOFMarker
+					gnuplot -persist <<-EOFMarker
+					set xlabel "LV"
+					set ylabel "Capacity/Load"
+					set grid
+					set datafile separator ";"
+					set boxwidth 0.4
+					set style data histogram
+					set style fill solid
+					plot "test.csv" using 1:2 with boxes linecolor rgb "#00FF00", \
+						 "test.csv" using 1:3 with boxes linecolor rgb "#FF0000"
+				EOFMarker
+				
 			fi
 		
 		else 
@@ -242,6 +256,23 @@ case $2 in
 				
 				cat $2_$3.csv | head -11 > $2_$3_minmax.csv 
 				cat $2_$3.csv | tail -10 >> $2_$3_minmax.csv 
+				
+				
+				#Bar graphic
+				
+				gnuplot -persist <<-EOFMarker
+					gnuplot -persist <<-EOFMarker
+					set xlabel "LV"
+					set ylabel "Capacity/Load"
+					set grid
+					set datafile separator ";"
+					set boxwidth 0.4
+					set style data histogram
+					set style fill solid
+					plot "test.csv" using 1:2 with boxes linecolor rgb "#00FF00", \
+						 "test.csv" using 1:3 with boxes linecolor rgb "#FF0000"
+				EOFMarker
+
 			
 				sort -t ';' -n -k3 $2_$3_minmax.csv 
 			fi
