@@ -252,19 +252,20 @@ case $2 in
 			awk -F: '{$4=$2-$3} {print $0}' OFS=: "tmp/sortdiff.csv" | sort -t':' -n -k4 >> tests/"$fileLV"_minmax.csv
 			
 			#Bar graphic
-				
-			#	gnuplot -persist <<-EOFMarker
-			#		gnuplot -persist <<-EOFMarker
-			#		set xlabel "LV"
-			#		set ylabel "Capacity/Load"
-			#		set grid
-			#		set datafile separator ";"
-			#		set boxwidth 0.4
-			#		set style data histogram
-			#		set style fill solid
-			#		plot "test.csv" using 1:2 with boxes linecolor rgb "#00FF00", \
-			#			 "test.csv" using 1:3 with boxes linecolor rgb "#FF0000"
-			#	EOFMarker
+				cd tests
+				gnuplot -persist <<-EOFMarker
+					set xlabel "LV"
+					set ylabel "Capacity/Load"
+					set grid
+					set datafile separator ":"
+					set boxwidth 2.0
+					set style data histogram
+					set style fill solid
+					set terminal png
+					set output "../graphs/lvgraphs.png"
+					plot "lv_all_minmax.csv" using 1:2 with boxes linecolor rgb "#00FF00" title "Capacity", \
+						 "lv_all_minmax.csv" using 1:3 with boxes linecolor rgb "#FF0000" title "Load"
+				EOFMarker
 			
 
 		fi;;
