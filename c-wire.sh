@@ -203,6 +203,7 @@ case $2 in
 	hva)
 		if [ $# -eq 4 ]; then
 		
+
 		echo "HV-A:Capacity:Load" > "tests/$2_$3_$4.csv"
 		sort tmp/data_processed.csv -t':' -n -k2 >> "tests/$2_$3_$4.csv"
 		
@@ -210,6 +211,7 @@ case $2 in
 		
 		echo "HV-A:Capacity:Load" > "tests/$2_$3.csv"
 		sort tmp/data_processed.csv -t':' -n -k2 >> "tests/$2_$3.csv"
+
 		
 		fi;;
 	
@@ -225,6 +227,7 @@ case $2 in
 	
 		echo "HV-B:Capacity:Load" > "tests/$2_$3.csv"
 		sort "tmp/data_processed.csv" -t':' -n -k2 >> "tests/$2_$3.csv"
+
 		
 		fi;;
 		
@@ -232,6 +235,7 @@ case $2 in
 		
 		if [ $# -eq 4 ]; then
 		
+
 		echo "LV:Capacity:Load" > "tests/$2_$3_$4.csv"
 		sort "tmp/data_processed.csv" -t':' -n -k2 >> "tests/$2_$3_$4.csv" 
 		fileLV="$2_$3_$4" 
@@ -241,6 +245,7 @@ case $2 in
 		echo "LV:Capacity:Load" > "tests/$2_$3.csv"
 		sort "tmp/data_processed.csv" -t':' -n -k2 >> "tests/$2_$3.csv"
 		fileLV="$2_$3" 
+
 
 		fi
 
