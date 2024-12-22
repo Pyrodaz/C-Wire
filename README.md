@@ -1,6 +1,6 @@
 # C-Wire
 
-This program analyses a data file to know if an electrical station is in a state of overconsumption by calculating the composants which are linked to this station. 
+This program analyses a data file to know if an electrical station is in a state of overconsumption by calculating the components which are linked to this station. 
 There is three type of stations : HV-B, HV-A, LV.  <br>
 HV-B stations provide electricity to companies that need a lot of electricity and to HV-A stations. <br>
 HV-A stations provide electricity to companies that need less electricity and to LV stations. <br>
