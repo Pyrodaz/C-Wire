@@ -286,6 +286,7 @@ case $2 in
 		if [ "$3" == "all" ]; then
 			#In the case of lv all, we create a file minmax with the ten station with the least and the ten with the most consumption
 			tail -n+2 "tests/$fileLV.csv" | sort -t':' -n -k3 > "tmp/sortload.csv"
+			#Sortload is used to sort stations by consommation and sortdiff only takes the stations usefull to the file minmax
 			head -n10 "tmp/sortload.csv" >> "tmp/sortdiff.csv"
 			tail -n10 "tmp/sortload.csv" >> "tmp/sortdiff.csv"
 			echo "LV:Capacity:Load:Energy Difference" > tests/"$fileLV"_minmax.csv
